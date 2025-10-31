@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Resume Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      background-color: #0078ff;
+      color: white;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    .main {
+      width: 90%;
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px gray;
+    }
+    .form-section, .preview-section {
+      padding: 10px;
+      margin-top: 20px;
+    }
+    .form-section {
+      border-bottom: 2px solid #eee;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #0078ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005ecb;
+    }
+    #resumePreview {
+      background-color: #fafafa;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    #resumePreview h2 {
+      color: #0078ff;
+      margin-top: 0;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Interactive Resume Builder</h1>
+  <div class="main">
+    <div class="form-section">
+      <h2>Enter Your Details</h2>
+      <label>Full Name:</label>
+      <input type="text" id="name" placeholder="Enter your name">
+      <label>Email:</label>
+      <input type="email" id="email" placeholder="Enter your email">
+      <label>Phone Number:</label>
+      <input type="text" id="phone" placeholder="Enter your phone number">
+      <label>Profile Summary:</label>
+      <textarea id="summary" rows="3" placeholder="Write a short summary..."></textarea>
+      <h3>Education</h3>
+      <div id="educationSection">
+        <input type="text" class="edu" placeholder="Example: B.Tech in CSE - XYZ College (2024)">
+      </div>
+      <button type="button" onclick="addEducation()">+ Add More Education</button>
+      <h3>Experience</h3>
+      <div id="experienceSection">
+        <input type="text" class="exp" placeholder="Example: Intern at ABC Company (2 months)">
+      </div>
+      <button type="button" onclick="addExperience()">+ Add More Experience</button>
+      <h3>Skills</h3>
+      <input type="text" id="skills" placeholder="Example: HTML, CSS, JavaScript">
+      <br><br>
+      <button type="button" onclick="clearForm()">Clear Form</button>
+    </div>
+    <div class="preview-section">
+      <h2>Live Resume Preview</h2>
+      <div id="resumePreview">
+        <h2 id="prevName">Your Name</h2>
+        <p id="prevEmail"></p>
+        <p id="prevPhone"></p>
+        <p id="prevSummary"></p>
+        <h3>Education</h3>
+        <ul id="prevEducation"></ul>
+        <h3>Experience</h3>
+        <ul id="prevExperience"></ul>
+        <h3>Skills</h3>
+        <p id="prevSkills"></p>
+      </div>
+    </div>
+  </div>
+  <script>
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const phoneInput = document.getElementById("phone");
+    const summaryInput = document.getElementById("summary");
+    const skillsInput = document.getElementById("skills");
+    const prevName = document.getElementById("prevName");
+    const prevEmail = document.getElementById("prevEmail");
+    const prevPhone = document.getElementById("prevPhone");
+    const prevSummary = document.getElementById("prevSummary");
+    const prevSkills = document.getElementById("prevSkills");
+    const prevEducation = document.getElementById("prevEducation");
+    const prevExperience = document.getElementById("prevExperience");
+
+    nameInput.addEventListener("input", () => prevName.innerText = nameInput.value);
+    emailInput.addEventListener("input", () => prevEmail.innerText = emailInput.value);
+    phoneInput.addEventListener("input", () => prevPhone.innerText = phoneInput.value);
+    summaryInput.addEventListener("input", () => prevSummary.innerText = summaryInput.value);
+    skillsInput.addEventListener("input", () => prevSkills.innerText = skillsInput.value);
+
+    function updateEducation() {
+      const eduInputs = document.querySelectorAll(".edu");
+      prevEducation.innerHTML = "";
+      eduInputs.forEach(e => {
+        if (e.value.trim() !== "") {
+          const li = document.createElement("li");
+          li.textContent = e.value;
+          prevEducation.appendChild(li);
+        }
+      });
+    }
+
+    function updateExperience() {
+      const expInputs = document.querySelectorAll(".exp");
+      prevExperience.innerHTML = "";
+      expInputs.forEach(e => {
+        if (e.value.trim() !== "") {
+          const li = document.createElement("li");
+          li.textContent = e.value;
+          prevExperience.appendChild(li);
+        }
+      });
+    }
+
+    document.querySelectorAll(".edu").forEach(e => e.addEventListener("input", updateEducation));
+    document.querySelectorAll(".exp").forEach(e => e.addEventListener("input", updateExperience));
+
+    function addEducation() {
+      const newEdu = document.createElement("input");
+      newEdu.type = "text";
+      newEdu.className = "edu";
+      newEdu.placeholder = "Add more education...";
+      newEdu.addEventListener("input", updateEducation);
+      document.getElementById("educationSection").appendChild(newEdu);
+    }
+
+    function addExperience() {
+      const newExp = document.createElement("input");
+      newExp.type = "text";
+      newExp.className = "exp";
+      newExp.placeholder = "Add more experience...";
+      newExp.addEventListener("input", updateExperience);
+      document.getElementById("experienceSection").appendChild(newExp);
+    }
+
+    function clearForm() {
+      document.querySelectorAll("input, textarea").forEach(el => el.value = "");
+      prevName.innerText = "Your Name";
+      prevEmail.innerText = "";
+      prevPhone.innerText = "";
+      prevSummary.innerText = "";
+      prevSkills.innerText = "";
+      prevEducation.innerHTML = "";
+      prevExperience.innerHTML = "";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editkaro.in - Video Editing & Social Media Marketing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            animation: fadeInDown 1s ease;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease;
+        }
+
+        /* Category Filter Buttons */
+        .filter-container {
+            text-align: center;
+            margin: 40px 20px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 12px 25px;
+            margin: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: #fff;
+            color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .filter-btn.active {
+            background: #fff;
+            color: #667eea;
+        }
+
+        /* Portfolio Grid */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .portfolio-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            animation: fadeInUp 0.6s ease;
+            border: 2px solid transparent;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border-color: #fff;
+        }
+
+        .portfolio-item.hide {
+            display: none;
+        }
+
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .portfolio-item:hover .video-thumbnail img {
+            transform: scale(1.1);
+        }
+
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-item:hover .play-icon {
+            background: #667eea;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        .play-icon::after {
+            content: '▶';
+            margin-left: 3px;
+        }
+
+        .item-details {
+            padding: 20px;
+        }
+
+        .item-details h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        .item-details p {
+            font-size: 0.95em;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-right: 5px;
+        }
+
+        /* Modal/Lightbox */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 900px;
+            width: 90%;
+            background: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            animation: slideUp 0.4s ease;
+        }
+
+        .modal-video {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        .modal-info {
+            padding: 25px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 60px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .portfolio-grid {
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .filter-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎬 EDITKARO.IN</h1>
+        <p>Professional Video Editing & Social Media Marketing Agency</p>
+    </header>
+
+    <div class="filter-container">
+        <button class="filter-btn active" data-filter="all">All Projects</button>
+        <button class="filter-btn" data-filter="short-form">Short-Form</button>
+        <button class="filter-btn" data-filter="long-form">Long-Form</button>
+        <button class="filter-btn" data-filter="gaming">Gaming</button>
+        <button class="filter-btn" data-filter="football">Football Edits</button>
+        <button class="filter-btn" data-filter="ecommerce">eCommerce Ads</button>
+        <button class="filter-btn" data-filter="documentary">Documentary</button>
+        <button class="filter-btn" data-filter="color-grading">Color Grading</button>
+        <button class="filter-btn" data-filter="anime">Anime Videos</button>
+        <button class="filter-btn" data-filter="ads">Advertisements</button>
+    </div>
+
+    <div class="portfolio-grid" id="portfolioGrid">
+        <!-- Portfolio items will be dynamically generated here -->
+    </div>
+
+    <!-- Modal for Video Preview -->
+    <div class="modal" id="videoModal">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <div class="modal-video" id="modalVideo"></div>
+            <div class="modal-info">
+                <h3 id="modalTitle"></h3>
+                <p id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Editkaro.in - All Rights Reserved</p>
+        <p>Made with ❤️ for showcasing creative video editing work</p>
+    </footer>
+
+    <script>
+        // Portfolio data - in a real scenario this would come from a database
+        const portfolioData = [
+            {
+                id: 1,
+                title: "Instagram Reel - Product Launch",
+                description: "Dynamic short-form content for social media engagement with trending music and effects.",
+                category: "short-form",
+                thumbnail: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=250&fit=crop"
+            },
+            {
+                id: 2,
+                title: "Gaming Montage - BGMI Highlights",
+                description: "Epic gaming moments with color correction and smooth transitions.",
+                category: "gaming",
+                thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop"
+            },
+            {
+                id: 3,
+                title: "Football Skills Compilation",
+                description: "High-energy football edit with motion tracking and cinematic slow-motion.",
+                category: "football",
+                thumbnail: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=250&fit=crop"
+            },
+            {
+                id: 4,
+                title: "eCommerce Product Ad - Fashion Brand",
+                description: "Professional product showcase with clean transitions and text animations.",
+                category: "ecommerce ads",
+                thumbnail: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=250&fit=crop"
+            },
+            {
+                id: 5,
+                title: "Documentary Style - Travel Vlog",
+                description: "Cinematic storytelling with natural color grading and ambient sound design.",
+                category: "documentary",
+                thumbnail: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=250&fit=crop"
+            },
+            {
+                id: 6,
+                title: "Anime AMV - Action Sequences",
+                description: "Fast-paced anime music video with synchronized beat drops and effects.",
+                category: "anime",
+                thumbnail: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=250&fit=crop"
+            },
+            {
+                id: 7,
+                title: "TikTok Viral Content",
+                description: "Trending short-form video optimized for maximum engagement and shares.",
+                category: "short-form",
+                thumbnail: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400&h=250&fit=crop"
+            },
+            {
+                id: 8,
+                title: "Color Grading Showreel",
+                description: "Before and after showcase of cinematic color grading techniques.",
+                category: "color-grading",
+                thumbnail: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=400&h=250&fit=crop"
+            },
+            {
+                id: 9,
+                title: "YouTube Long-Form - Tutorial",
+                description: "Educational content with graphics, B-roll, and engaging pacing.",
+                category: "long-form",
+                thumbnail: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=400&h=250&fit=crop"
+            },
+            {
+                id: 10,
+                title: "Brand Commercial - 30 Second Spot",
+                description: "Professional advertisement with voice-over and motion graphics.",
+                category: "ads",
+                thumbnail: "https://images.unsplash.com/photo-1533750516457-a7f992034fec?w=400&h=250&fit=crop"
+            },
+            {
+                id: 11,
+                title: "Gaming Stream Highlights - Valorant",
+                description: "Best moments compilation with custom transitions and overlays.",
+                category: "gaming",
+                thumbnail: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=250&fit=crop"
+            },
+            {
+                id: 12,
+                title: "Premier League Match Recap",
+                description: "Sports highlights with dynamic graphics and commentary sync.",
+                category: "football",
+                thumbnail: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&h=250&fit=crop"
+            }
+        ];
+
+        // Generate portfolio items
+        function generatePortfolio() {
+            const grid = document.getElementById('portfolioGrid');
+            grid.innerHTML = '';
+            
+            portfolioData.forEach(item => {
+                const portfolioItem = `
+                    <div class="portfolio-item" data-category="${item.category}" onclick="openModal(${item.id})">
+                        <div class="video-thumbnail">
+                            <img src="${item.thumbnail}" alt="${item.title}">
+                            <div class="play-icon"></div>
+                        </div>
+                        <div class="item-details">
+                            <h3>${item.title}</h3>
+                            <p>${item.description}</p>
+                            <span class="category-badge">${item.category.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += portfolioItem;
+            });
+        }
+
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const filterValue = this.getAttribute('data-filter');
+                const items = document.querySelectorAll('.portfolio-item');
+                
+                items.forEach(item => {
+                    if(filterValue === 'all') {
+                        item.classList.remove('hide');
+                    } else {
+                        if(item.getAttribute('data-category') === filterValue) {
+                            item.classList.remove('hide');
+                        } else {
+                            item.classList.add('hide');
+                        }
+                    }
+                });
+            });
+        });
+
+        // Modal functions
+        function openModal(id) {
+            const item = portfolioData.find(p => p.id === id);
+            const modal = document.getElementById('videoModal');
+            const modalVideo = document.getElementById('modalVideo');
+            
+            // In a real project, you'd load actual video here
+            modalVideo.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000;">
+                    <div style="text-align: center;">
+                        <p style="font-size: 24px; margin-bottom: 20px;">🎥</p>
+                        <p style="font-size: 18px;">Video Player</p>
+                        <p style="font-size: 14px; opacity: 0.7; margin-top: 10px;">In production, actual video would load here</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalTitle').textContent = item.title;
+            document.getElementById('modalDescription').textContent = item.description;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('videoModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on background click
+        document.getElementById('videoModal').addEventListener('click', function(e) {
+            if(e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(e) {
+            if(e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize portfolio on page load
+        window.addEventListener('DOMContentLoaded', generatePortfolio);
+    </script>
+</body>
+</html>
